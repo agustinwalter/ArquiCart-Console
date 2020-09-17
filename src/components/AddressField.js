@@ -116,7 +116,6 @@ const AddressField = ({ address, onSelectedAddress }) => {
   }
 
   return (
-    // Column
     <div>
       {showField && (
         <TextField

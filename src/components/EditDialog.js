@@ -133,8 +133,8 @@ const EditDialog = ({ show, onClose, building, onBuildingUpdated }) => {
         description,
         location: new firebase.firestore.GeoPoint(location.lat, location.lon),
         extraData,
-        approved: false
-        // approved: true
+        // approved: false
+        approved: true
       })
     for (const image of images) {
       // Elimino las fotos que hay q eliminar
