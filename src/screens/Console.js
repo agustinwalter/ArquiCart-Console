@@ -47,6 +47,7 @@ const Console = () => {
   const [buildingToDelete, setBuildingToDelete] = useState()
   const [buildingToEdit, setBuildingToEdit] = useState()
 
+  // Get buildings
   useEffect(() => {
     firebase
       .firestore()
