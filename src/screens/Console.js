@@ -6,39 +6,15 @@ import 'firebase/storage'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import BuildingCard from '../components/BuildingCard'
 import DeleteDialog from '../components/DeleteDialog'
 import EditDialog from '../components/EditDialog'
 import AdminUsersCard from '../components/AdminUsersCard'
-
-const useStyles = makeStyles(theme => ({
-  title: {
-    flexGrow: 1
-  },
-  divContent: {
-    display: 'flex',
-    padding: theme.spacing(2),
-    backgroundColor: '#f5f5f5',
-    minHeight: '100vh',
-    boxSizing: 'border-box'
-  },
-  left: {
-    width: '70%',
-    padding: theme.spacing(1),
-    height: 'fit-content',
-    marginRight: theme.spacing(2)
-  },
-  right: {
-    width: '30%',
-    padding: theme.spacing(1),
-    height: 'fit-content'
-  }
-}))
+import styles from './styles/ConsoleStyles'
 
 const Console = () => {
-  const classes = useStyles()
+  const c = styles()
 
   const [buildings, setBuildings] = useState([])
   const [admins, setAdmins] = useState([])
@@ -46,21 +22,37 @@ const Console = () => {
   const [showEditDialog, setShowEditDialog] = useState(false)
   const [buildingToDelete, setBuildingToDelete] = useState()
   const [buildingToEdit, setBuildingToEdit] = useState()
+  const [pages, setPages] = useState([])
+  const [actualPage, setActualPage] = useState()
 
+  const query = firebase
+    .firestore()
+    .collection(process.env.REACT_APP_BUILDINGS_COLL)
+    .orderBy('approved')
+    .orderBy('name') // Orenar por fecha de creación
+    .limit(100)
+
+  // Get buildings and admins
   useEffect(() => {
+    // Get buildings
     firebase
       .firestore()
-      .collection('buildings')
-      .limit(10)
+      .collection(process.env.REACT_APP_BUILDINGS_COLL)
+      .orderBy('approved')
+      .orderBy('name') // Orenar por fecha de creación
+      .limit(100)
       .get()
       .then(snap => {
         if (!snap.empty) {
           setBuildings(snap.docs)
+          setPages([snap.docs[0], snap.docs[snap.docs.length - 1]])
+          setActualPage(0)
         }
       })
+    // Get admins
     firebase
       .firestore()
-      .collection('users')
+      .collection(process.env.REACT_APP_USERS_COLL)
       .where('isAdmin', '==', true)
       .get()
       .then(snap => {
@@ -92,20 +84,59 @@ const Console = () => {
   }
 
   const _deleteBuilding = () => {
-    firebase.firestore().doc(`buildings/${buildingToDelete.id}`).delete()
+    firebase
+      .firestore()
+      .doc(`${process.env.REACT_APP_BUILDINGS_COLL}/${buildingToDelete.id}`)
+      .delete()
     buildingToDelete.get('images').forEach(image => {
-      firebase.storage().refFromURL(image).delete()
+      try {
+        firebase.storage().refFromURL(image).delete()
+      } catch (error) {}
     })
     setBuildings(buildings.filter(item => item.id !== buildingToDelete.id))
     setBuildingToDelete()
     setShowDeleteDialog(false)
   }
 
+  const nextPage = () => {
+    startAfter(pages[actualPage + 1], actualPage + 1)
+    window.scrollTo(0, 0)
+  }
+
+  const prevPage = () => {
+    if (actualPage === 1) {
+      query
+        .startAt(pages[actualPage - 1])
+        .get()
+        .then(snap => {
+          if (!snap.empty) {
+            setBuildings(snap.docs)
+            setActualPage(actualPage - 1)
+          }
+        })
+    } else startAfter(pages[actualPage - 1], actualPage - 1)
+    window.scrollTo(0, 0)
+  }
+
+  const startAfter = (after, page) => {
+    query
+      .startAfter(after)
+      .get()
+      .then(snap => {
+        if (!snap.empty) {
+          setBuildings(snap.docs)
+          setActualPage(page)
+          if (actualPage + 1 === pages.length - 1)
+            setPages([...pages, snap.docs[snap.docs.length - 1]])
+        }
+      })
+  }
+
   return (
     <React.Fragment>
       <AppBar position='static'>
         <Toolbar>
-          <Typography variant='h6' className={classes.title}>
+          <Typography variant='h6' style={{ flexGrow: 1 }}>
             ArquiCart - Consola de administración
           </Typography>
           <Button color='inherit' onClick={_signOut}>
@@ -114,10 +145,10 @@ const Console = () => {
         </Toolbar>
       </AppBar>
       {/* Console */}
-      <div className={classes.divContent}>
+      <div className={c.divContent}>
         {/* Left card */}
-        <Paper elevation={3} className={classes.left}>
-          <Typography variant='h6' className={classes.title}>
+        <Paper elevation={3} className={c.left}>
+          <Typography variant='h6' style={{ flexGrow: 1 }}>
             Información de edificios
           </Typography>
           {buildings.map(building => {
@@ -132,8 +163,8 @@ const Console = () => {
           })}
         </Paper>
         {/* Right card */}
-        <Paper elevation={3} className={classes.right}>
-          <Typography variant='h6' className={classes.title}>
+        <Paper elevation={3} className={c.right}>
+          <Typography variant='h6' style={{ flexGrow: 1 }}>
             Administradores actuales
           </Typography>
           {admins.map(admin => {
@@ -141,6 +172,27 @@ const Console = () => {
           })}
         </Paper>
       </div>
+
+      {/* Pagination */}
+      <div className={c.divPag}>
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={prevPage}
+          disabled={Boolean(actualPage === 0)}
+        >
+          Anterior
+        </Button>
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={nextPage}
+          disabled={Boolean(buildings.length < 100)}
+        >
+          Siguiente
+        </Button>
+      </div>
+
       {/* Delete dielog */}
       <DeleteDialog
         show={showDeleteDialog}
