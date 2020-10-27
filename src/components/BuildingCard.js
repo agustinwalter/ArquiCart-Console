@@ -7,55 +7,15 @@ import EditRoundedIcon from '@material-ui/icons/EditRounded'
 import DoneRoundedIcon from '@material-ui/icons/DoneRounded'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
-import { makeStyles } from '@material-ui/core/styles'
 import * as firebase from 'firebase/app'
+import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded'
+import IconButton from '@material-ui/core/IconButton'
 import 'firebase/firestore'
-
-const useStyles = makeStyles(() => ({
-  infoCard: {
-    padding: '8px',
-    border: '1px solid grey',
-    borderRadius: '5px',
-    marginTop: '18px'
-  },
-  gridList: {
-    flexWrap: 'nowrap',
-    transform: 'translateZ(0)'
-  },
-  dividerInfo: {
-    margin: '12px 0'
-  },
-  divBtns: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  divInfo: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'start'
-  },
-  status: {
-    fontSize: '14px',
-    color: '#663c00',
-    verticalAlign: 'middle',
-    background: '#fff4e5',
-    padding: '3px 7px',
-    border: '1px solid #663c00',
-    borderRadius: '4px'
-  },
-  statusApro: {
-    fontSize: '14px',
-    color: '#1e4620',
-    verticalAlign: 'middle',
-    background: '#edf7ed',
-    padding: '3px 7px',
-    border: '1px solid #1e4620',
-    borderRadius: '4px'
-  }
-}))
+import styles from './styles/BuildingCard'
+import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded'
 
 function BuildingCard({ buildingData, confirmDelete, showEditDialog }) {
-  const classes = useStyles()
+  const c = styles()
 
   const name = buildingData.get('name')
   const architects = buildingData.get('architects')
@@ -64,34 +24,53 @@ function BuildingCard({ buildingData, confirmDelete, showEditDialog }) {
   const description = buildingData.get('description')
   const images = buildingData.get('images')
   const [approved, setApproved] = useState(buildingData.get('approved'))
+  const [expanded, setExpanded] = useState(false)
 
   const _approveBuilding = () => {
-    firebase.firestore().doc(`buildings/${buildingData.id}`).update({
-      approved: !approved
-    })
+    firebase
+      .firestore()
+      .doc(`${process.env.REACT_APP_BUILDINGS_COLL}/${buildingData.id}`)
+      .update({
+        approved: !approved
+      })
     setApproved(!approved)
   }
 
-  const Approved = () => {
-    if (approved) {
-      return <span className={classes.statusApro}>Aprobado</span>
-    } else {
-      return <span className={classes.status}>En revisión</span>
-    }
+  const handleExpand = () => {
+    setExpanded(!expanded)
   }
 
+  const Approved = () => {
+    if (approved) return <span className={c.statusApro}>Aprobado</span>
+    else return <span className={c.status}>En revisión</span>
+  }
+
+  if (!expanded) {
+    return (
+      <div className={c.infoSimple} onClick={handleExpand}>
+        <Typography variant='h6'>
+          {name} <Approved />
+        </Typography>
+        <IconButton style={{ padding: '6px' }}>
+          <ExpandMoreRoundedIcon fontSize='large' />
+        </IconButton>
+      </div>
+    )
+  }
   return (
-    <div className={classes.infoCard}>
+    <div className={c.infoCard}>
       {/* Info and buttons */}
-      <div className={classes.divInfo}>
+      <div className={c.divInfo}>
         {/* Info */}
-        <div>
+        <div style={{ marginTop: '8px' }}>
           <Typography variant='h6'>
             {name} <Approved />
           </Typography>
-          <Typography variant='body1'>
-            <b>Dirección:</b> {address}
-          </Typography>
+          {address !== '' && (
+            <Typography variant='body1'>
+              <b>Dirección:</b> {address}
+            </Typography>
+          )}
           <Typography variant='body1'>
             <b>Arquitecto/s:</b> {architects}
           </Typography>
@@ -102,44 +81,51 @@ function BuildingCard({ buildingData, confirmDelete, showEditDialog }) {
           ))}
         </div>
         {/* Buttons */}
-        <div className={classes.divBtns}>
-          <Button
-            variant='contained'
-            color='primary'
-            size='small'
-            onClick={_approveBuilding}
-            startIcon={<DoneRoundedIcon />}
-          >
-            {approved ? 'Aprobado' : 'Aprobar'}
-          </Button>
-          <br />
-          <Button
-            variant='contained'
-            color='primary'
-            size='small'
-            onClick={showEditDialog}
-            startIcon={<EditRoundedIcon />}
-          >
-            Editar
-          </Button>
-          <br />
-          <Button
-            variant='contained'
-            color='secondary'
-            size='small'
-            onClick={confirmDelete}
-            startIcon={<DeleteRoundedIcon />}
-          >
-            Eliminar
-          </Button>
+        <div className={c.divBtns2}>
+          <div className={c.divBtns}>
+            <Button
+              variant='contained'
+              color='primary'
+              size='small'
+              onClick={_approveBuilding}
+              startIcon={<DoneRoundedIcon />}
+            >
+              {approved ? 'Aprobado' : 'Aprobar'}
+            </Button>
+            <Button
+              variant='contained'
+              color='primary'
+              size='small'
+              onClick={showEditDialog}
+              style={{ margin: '12px 0' }}
+              startIcon={<EditRoundedIcon />}
+            >
+              Editar
+            </Button>
+            <Button
+              variant='contained'
+              color='secondary'
+              size='small'
+              onClick={confirmDelete}
+              startIcon={<DeleteRoundedIcon />}
+            >
+              Eliminar
+            </Button>
+          </div>
+          {/* Close button */}
+          <IconButton style={{ padding: '6px' }} onClick={handleExpand}>
+            <ExpandLessRoundedIcon fontSize='large' />
+          </IconButton>
         </div>
       </div>
-      <Divider className={classes.dividerInfo} />
+      <Divider style={{ margin: '12px 12px 12px 0' }} />
       {/* Description */}
-      <Typography variant='body1'>{description}</Typography>
-      <Divider className={classes.dividerInfo} />
+      <Typography variant='body1' style={{ marginRight: '12px' }}>
+        {description}
+      </Typography>
+      <Divider style={{ margin: '12px 12px 12px 0' }} />
       {/* Images */}
-      <GridList className={classes.gridList} cols={4.5}>
+      <GridList className={c.gridList} cols={4.5}>
         {images.map(image => (
           <GridListTile key={`info-card-${image}`}>
             <img src={image} alt='Foto de un edificio' />

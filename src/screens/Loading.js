@@ -1,5 +1,5 @@
 import React from 'react'
-import CircularProgress from '@material-ui/core/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const styles = {
   loader: {
@@ -9,7 +9,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
-  },
+  }
 }
 
 function Loading() {

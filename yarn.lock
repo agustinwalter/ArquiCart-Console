@@ -1579,6 +1579,17 @@
   dependencies:
     "@babel/runtime" "^7.4.4"
 
+"@material-ui/lab@^4.0.0-alpha.56":
+  version "4.0.0-alpha.56"
+  resolved "https://registry.yarnpkg.com/@material-ui/lab/-/lab-4.0.0-alpha.56.tgz#ff63080949b55b40625e056bbda05e130d216d34"
+  integrity sha512-xPlkK+z/6y/24ka4gVJgwPfoCF4RCh8dXb1BNE7MtF9bXEBLN/lBxNTK8VAa0qm3V2oinA6xtUIdcRh0aeRtVw==
+  dependencies:
+    "@babel/runtime" "^7.4.4"
+    "@material-ui/utils" "^4.10.2"
+    clsx "^1.0.4"
+    prop-types "^15.7.2"
+    react-is "^16.8.0"
+
 "@material-ui/styles@^4.10.0":
   version "4.10.0"
   resolved "https://registry.yarnpkg.com/@material-ui/styles/-/styles-4.10.0.tgz#2406dc23aa358217aa8cc772e6237bd7f0544071"
@@ -1690,25 +1701,6 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
-
-"@react-google-maps/api@^1.10.1":
-  version "1.10.1"
-  resolved "https://registry.yarnpkg.com/@react-google-maps/api/-/api-1.10.1.tgz#a1ebaac789771a8a8df66803edbc1f7b22dad4c6"
-  integrity sha512-hb8urUcwZw99Cu3yQnZWUbXjR1Ym/8C21kSX6B02I29l6DXNxDbJ5Jo/T5swhnizPKY7TNhR1oTctC/HY7SQWA==
-  dependencies:
-    "@react-google-maps/infobox" "1.10.0"
-    "@react-google-maps/marker-clusterer" "1.10.0"
-    invariant "2.2.4"
-
-"@react-google-maps/infobox@1.10.0":
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@react-google-maps/infobox/-/infobox-1.10.0.tgz#b1982043bb2f3b31d3d9fb703635e04efb55c674"
-  integrity sha512-MhT2nMmjeG7TCxRv/JdylDyNd/n66ggSQQhTWVjJJTtdB/xqd0T8BHCkBWDN9uF0i0yCZzMFl2P2Y1zJ+xppBg==
-
-"@react-google-maps/marker-clusterer@1.10.0":
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@react-google-maps/marker-clusterer/-/marker-clusterer-1.10.0.tgz#d7591332b11f951dd8b0c42b7495797677dc6a9e"
-  integrity sha512-3GLVgeXNStVcdiLMxzi3cBjr32ctlexLPPGQguwcYd6yPLaCcnVCwyzhV68KvL00xqOAD1c3aABV9EGgY8u6Qw==
 
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.3"
@@ -6006,7 +5998,7 @@ internal-slot@^1.0.2:
     has "^1.0.3"
     side-channel "^1.0.2"
 
-invariant@2.2.4, invariant@^2.2.2, invariant@^2.2.4:
+invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -7032,6 +7024,15 @@ jss-plugin-rule-value-function@^10.0.3:
   version "10.4.0"
   resolved "https://registry.yarnpkg.com/jss-plugin-rule-value-function/-/jss-plugin-rule-value-function-10.4.0.tgz#7cff4a91e84973536fa49b6ebbdbf7f339b01c82"
   integrity sha512-w8504Cdfu66+0SJoLkr6GUQlEb8keHg8ymtJXdVHWh0YvFxDG2l/nS93SI5Gfx0fV29dO6yUugXnKzDFJxrdFQ==
+  dependencies:
+    "@babel/runtime" "^7.3.1"
+    jss "10.4.0"
+    tiny-warning "^1.0.2"
+
+jss-plugin-template@^10.4.0:
+  version "10.4.0"
+  resolved "https://registry.yarnpkg.com/jss-plugin-template/-/jss-plugin-template-10.4.0.tgz#79d92a04743cbe0a6494f529e06372dba4c4b7b8"
+  integrity sha512-bpRu56Dnas1+G/HvB0TdeC2907YujZ8F3pwLls7gNS6oJSYZD3iYbqsJuRVcAkhNINYVdcuW1SCo1aigCI7r/Q==
   dependencies:
     "@babel/runtime" "^7.3.1"
     jss "10.4.0"

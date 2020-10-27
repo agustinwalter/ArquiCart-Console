@@ -125,7 +125,7 @@ const EditDialog = ({ show, onClose, building, onBuildingUpdated }) => {
     // Actualizo los datos del edificio
     await firebase
       .firestore()
-      .doc(`buildings/${building.id}`)
+      .doc(`${process.env.REACT_APP_BUILDINGS_COLL}/${building.id}`)
       .update({
         name,
         address,
@@ -139,10 +139,12 @@ const EditDialog = ({ show, onClose, building, onBuildingUpdated }) => {
     for (const image of images) {
       // Elimino las fotos que hay q eliminar
       if (image.delete && !image.isLocal) {
-        await firebase.storage().refFromURL(image.image).delete()
+        try {
+          await firebase.storage().refFromURL(image.image).delete()
+        } catch (error) {}
         await firebase
           .firestore()
-          .doc(`buildings/${building.id}`)
+          .doc(`${process.env.REACT_APP_BUILDINGS_COLL}/${building.id}`)
           .update({
             images: firebase.firestore.FieldValue.arrayRemove(image.image)
           })
@@ -157,12 +159,12 @@ const EditDialog = ({ show, onClose, building, onBuildingUpdated }) => {
         const snap = await firebase
           .storage()
           .ref()
-          .child(`buildings/${imageName}`)
+          .child(`${process.env.REACT_APP_BUILDINGS_COLL}/${imageName}`)
           .put(image.image)
         const downloadURL = await snap.ref.getDownloadURL()
         await firebase
           .firestore()
-          .doc(`buildings/${building.id}`)
+          .doc(`${process.env.REACT_APP_BUILDINGS_COLL}/${building.id}`)
           .update({
             images: firebase.firestore.FieldValue.arrayUnion(downloadURL)
           })
@@ -170,7 +172,7 @@ const EditDialog = ({ show, onClose, building, onBuildingUpdated }) => {
     }
     const updatedBuilding = await firebase
       .firestore()
-      .doc(`buildings/${building.id}`)
+      .doc(`${process.env.REACT_APP_BUILDINGS_COLL}/${building.id}`)
       .get()
     onBuildingUpdated(updatedBuilding)
     setShowOvelay({ display: 'none' })
@@ -195,10 +197,12 @@ const EditDialog = ({ show, onClose, building, onBuildingUpdated }) => {
             value={name}
             onChange={e => setName(e.target.value)}
           />
-          <AddressField
-            address={address}
-            onSelectedAddress={_onSelectedAddress}
-          />
+          {address !== '' && (
+            <AddressField
+              address={address}
+              onSelectedAddress={_onSelectedAddress}
+            />
+          )}
           <TextField
             margin='dense'
             variant='outlined'
